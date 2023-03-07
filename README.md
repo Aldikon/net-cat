@@ -3,5 +3,5 @@ This project consists on recreating the NetCat in a Server-Client Architecture t
 
 # Usage
 Write a command to start the program:
-    go run cmd/main.go
+    `go run cmd/main.go`
 
