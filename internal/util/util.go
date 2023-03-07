@@ -8,7 +8,7 @@ import (
 )
 
 func Logo() (string, error) {
-	text, err := os.ReadFile("../pkg/logo.txt")
+	text, err := os.ReadFile("logo.txt")
 	if err != nil {
 		return "", err
 	}
