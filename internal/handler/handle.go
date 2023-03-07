@@ -21,17 +21,13 @@ var (
 )
 
 func Run(l net.Listener) error {
-	history, err := os.Create("../logs/history.txt")
+	history, err := os.Create("history.txt")
 	if err != nil {
 		return err
 	}
-	defer func() error {
-		if err = os.Remove("../logs/history.txt"); err != nil {
-			return err
-		}
-		return nil
-	}()
+
 	go SendMessegeAll()
+
 	for {
 		conn, err := l.Accept()
 		if err != nil {
@@ -79,7 +75,9 @@ func Handle(conn net.Conn, history *os.File) {
 		return
 	}
 	fmt.Fprintf(conn, string(fileData))
+
 	fmt.Fprintf(conn, "[%s][%s]:", time.Now().Format("2006-1-2 15:4:5"), name)
+
 	MessageChannel <- model.NewMessage(name, fmt.Sprintf("%s has joined our chat...", name))
 
 	// INPUT TEXT
@@ -101,18 +99,16 @@ func Handle(conn net.Conn, history *os.File) {
 
 func SendMessegeAll() {
 	for {
-		select {
-		case msg := <-MessageChannel:
-			mu.Lock()
-			for conn, name := range Clients {
-				if name == msg.Name {
-					continue
-				}
-				timeNow := time.Now().Format("2006-1-2 15:4:5")
-				fmt.Fprintf(conn, "\n%s\n", msg.Text)
-				fmt.Fprintf(conn, "[%s][%s]:", timeNow, name)
+		msg := <-MessageChannel
+		mu.Lock()
+		for conn, name := range Clients {
+			if name == msg.Name {
+				continue
 			}
-			mu.Unlock()
+			timeNow := time.Now().Format("2006-1-2 15:4:5")
+			fmt.Fprintf(conn, "\n%s\n", msg.Text)
+			fmt.Fprintf(conn, "[%s][%s]:", timeNow, name)
 		}
+		mu.Unlock()
 	}
 }
