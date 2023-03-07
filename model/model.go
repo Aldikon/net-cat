@@ -11,13 +11,3 @@ func NewMessage(name string, text string) Message {
 		Text: text,
 	}
 }
-
-/*
-func (m Message) Name() string {
-	return m.name
-}
-
-func (m Message) Text() string {
-	return m.text
-}
-*/
